@@ -29,36 +29,88 @@ public class UserController {
     @GetMapping("{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") final Long id){
         Optional<User> user = repository.findById(id);
-        if(user == null){
+
+        if(user.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else if(!user.isEmpty()){
+            return new ResponseEntity(user, HttpStatus.OK);
         }
-        return new ResponseEntity(user, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping
-    public User postUser(@RequestBody User newUser){
-        return repository.save(newUser);
+    public ResponseEntity<User> postUser(@RequestBody User newUser){
+        if(newUser.getFirstname() != null && newUser.getLastname() != null && newUser.getEmail() != null && newUser.getPhone() != null && newUser.getActive() != null){
+            repository.save(newUser);
+            return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+//        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PutMapping
-    public User updateUser(@PathVariable(value = "id") Long id,
+    @PutMapping("{id}")
+    public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long id,
                            @RequestBody User userDetails) {
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Optional<User> user = repository.findById(id);
 
-        user.get().setFirstname(userDetails.getFirstname());
-        user.get().setLastname(userDetails.getLastname());
-        user.get().setEmail(userDetails.getEmail());
-        user.get().setPhone(userDetails.getPhone());
-        user.get().setActive(userDetails.getActive());
+        if(user.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if(userDetails.getFirstname() != null){
+            user.get().setFirstname(userDetails.getFirstname());
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if(userDetails.getLastname() != null){
+            user.get().setLastname(userDetails.getLastname());
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if(userDetails.getEmail() != null){
+            user.get().setEmail(userDetails.getEmail());
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if(userDetails.getPhone() != null){
+            user.get().setPhone(userDetails.getPhone());
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if(userDetails.getActive() != null){
+            user.get().setActive(userDetails.getActive());
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // El motivo por el que no uno todos los campos en un if con "&& and" es debido a que creo que se pueden crear HttpStatus Custom
+        }
+
         final User updatedUser = repository.save(user.get());
-        return updatedUser;
+        return new ResponseEntity<>(updatedUser,HttpStatus.OK);
 
     }
 
-    @DeleteMapping("users/{id}")
-    public Optional<User> deleteUser(@PathVariable(value = "id") Long userId){
-        Optional<User> user = repository.findById(userId);
-        repository.deleteById(userId);
-        return user;
+    @DeleteMapping("{id}")
+    public ResponseEntity deleteUser(@PathVariable(value = "id") Long id){
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Optional<User> user = repository.findById(id);
+        if(user.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else{
+            try {
+                repository.deleteById(id);
+                return new ResponseEntity(user.get(),HttpStatus.OK);
+            } catch (Exception e) {
+                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 }
