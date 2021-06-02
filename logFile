@@ -1,0 +1,6 @@
+ Request:  org.springframework.boot.actuate.trace.http.HttpTrace$Request@71a87a91
+ Response:  org.springframework.boot.actuate.trace.http.HttpTrace$Response@49a6f164
+ Principal:  null
+ Session:  null
+ TimeStamp:  2021-06-02T21:01:49.620344Z
+ TimeTaken:  30
