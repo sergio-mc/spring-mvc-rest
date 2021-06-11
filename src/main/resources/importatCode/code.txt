@@ -1,0 +1,20 @@
+------------------------------------------------------------------------------------------------------
+    // Mostrar error mediante orElseThrow
+@GetMapping("{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") final Long id){
+        Class<? extends User> user = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .getClass().;
+
+        return new ResponseEntity(user,HttpStatus.OK);
+    }
+
+    // Mejora
+@GetMapping("{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") final Long id){
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return new ResponseEntity(user,HttpStatus.OK);
+    }
+------------------------------------------------------------------------------------------------------

@@ -20,6 +20,7 @@ import java.util.Collections;
 
 import static springfox.documentation.builders.PathSelectors.regex;
 
+
 @EnableSwagger2
 @SpringBootApplication
 public class ProyectoApplication {
@@ -36,7 +37,6 @@ class HttpTraceActuatorConfiguration {
 
     @Bean
     public HttpTraceRepository httpTraceRepository() {
-
         return new InMemoryHttpTraceRepository();
     }
 
